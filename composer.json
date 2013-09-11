@@ -1,5 +1,5 @@
 {
-    "name": "galen/Validator",
+    "name": "galen/validator",
     "type": "library",
     "description": "PHP Validation library",
     "keywords": ["validator", "validation"],
