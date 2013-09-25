@@ -112,8 +112,8 @@ class Validator {
      * @return void
      * @access public
      */
-    public function addRule( $label, \Validator\Rule $rule, $invalid_error = null, $empty_error = null ) {
-        if ( $label === '' ) {
+    public function addRule( $label, \Validator\RuleInterface $rule, $invalid_error = null, $empty_error = null ) {
+        if ( !is_string( $label ) || empty( $label ) ) {
             throw new InvalidArgumentException( 'Invalid label passed to addRule' );
         }
         $this->rules[$label][] = $rule;
@@ -123,6 +123,24 @@ class Validator {
         if ( $empty_error ) {
             $this->empty_errors[$label][ get_class( $rule ) ] = ( string ) $empty_error;
         }
+    }
+
+    /**
+     * Add a validation rule if the data is not empty
+     *
+     * $validator->addRuleIfNotEmpty( 'email', new \Rule\Email( 'Enter a valid email' ) );
+     *
+     * Validation will only occur if email is not empty
+     * 
+     * @param $label Label of the item to add a rule to
+     * @param \Validator\Rule $rule Rule to validate against
+     * @param string $invalid_error Invalid error
+     * @param string $empty_error Empty error
+     * @return void
+     * @access public
+     */
+    public function addRuleIfNotEmpty( $label, \Validator\RuleInterface $rule, $invalid_error = null, $empty_error = null ) {
+        $this->addRule( $label, new \Validator\Rule\IfNotEmpty( $rule ), $invalid_error, $empty_error );
     }
 
     /**
@@ -146,7 +164,11 @@ class Validator {
      * @access public
      */
     public function getFirstError() {
-        return isset( $this->validation_errors[0] ) ? $this->validation_errors[0] : null;
+        if ( !count( $this->validation_errors ) ) {
+            return null;
+        }
+        $error = array_shift( $this->validation_errors );
+        return $error[0];
     }
 
     /**
@@ -272,12 +294,17 @@ class Validator {
      * Validate
      *
      * Validates the data
+     *
+     * $data can be an array or object
      * 
-     * @param array $data [description]
+     * @param mixed $data [description]
      * @return boolean Returns true if the data validates, otherwise false
      * @access public
      */
-    public function validate( array $data ) {
+    public function validate( $data ) {
+        if ( is_object( $data ) ) {
+            $data = get_object_vars( $data );
+        }
         $this->data = $this->unfiltered_data = $data;
         foreach( $this->rules as $data_label => $rules ) {
             $this->applyFilters( $data_label );

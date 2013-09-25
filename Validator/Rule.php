@@ -11,22 +11,12 @@ namespace Validator;
  * @package Validator
  */
 
-Abstract class Rule {
-
-    /**
-     * Validate
-     *
-     * Rules must implement this
-     * 
-     * @param array $data Data to validate
-     * @return bool Returns true if the rule validates, otherwise false
-     */
-    public abstract function validate( $data );
+Abstract class Rule implements RuleInterface {
 
     /**
      * Error exception
      *
-     * Throw an a rule error exception
+     * Throw a rule error exception
      * 
      * @param string $exception_type Type of exception
      * @param string $error Error
