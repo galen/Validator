@@ -4,7 +4,16 @@ Adding a rule is simple
 
     $validator->addRule( $rule, $key = null, $error_if_invalid = null, $error_if_empty = null );
  
-`$rule` The rule to add
+ Example:
+ 
+     $validator->addRule(
+     	new \Validator\Rule\MinLength( 2 ), // Rule
+     	'firstname', // Key of the data to validate in the array or object
+     	'Your first name must contain atleast 2 letters', // Error to display if firstname is invalid
+     	'Please enter your first name' // Error to display if firstname is empty
+     );
+ 
+`$rule` The rule to add.
 
 `$key` The key in the array or property in the object to validate  
 
@@ -12,9 +21,17 @@ Adding a rule is simple
 
 `$error_if_empty` Error to set if the data supplied is empty
 
-Having a separate error for invalid and empty data is convenient. For example, say you have a name field that you add rules to requiring it to be between 3 and 10 characters.  If a user entered 2 letters for their name and you just had an error stating "Please enter your name" the user can become confused. With this method you can have an error message when they leave a field empty stating "This field is required" and an error message when invalid data is supplied instructing them how ot fix it.
+- Multiple rules can be added for a key.
 
-`$key`, `$error_if_invalid`, and `$error_if_empty` are optional arguments.  `$key` is only required if you are validating an array or object. When adding the first rule if `$key` is supplied the validator knows you are validating an array or object and will throw an exception if `$key` is left out of subsequent calls to `addRule()`. The reverse is also true.
+- `$key`, `$error_if_invalid`, and `$error_if_empty` are optional arguments.  `$key` is only required if you are validating an array or object and not a single value. When adding the first rule to a validator if `$key` is supplied the validator knows you are validating an array or object and will throw an exception if `$key` is left out of subsequent calls to `addRule()`. The reverse is also true.
+
+- Having a separate error for invalid and empty data is convenient. For example, say you have a firstname field that you add rules to requiring it to be between 3 and 10 characters.  If a user entered 2 letters for their name and you just had an error stating "Please enter your name" the user can become confused. With this method you can have an error message when they leave a field empty stating "This field is required" and an error message when invalid data is supplied instructing them how to fix it.
+
+---
+
+##Rules
+
+Rules are classes in the Rule directory.  Creating your own rules is easy.  Add them to the Rules folder and make sure they extend `\Validator\Rule`. Instructions on how to use a rule should be contained in the Rule file.
 
 ---
 
