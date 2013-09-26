@@ -25,7 +25,7 @@ Abstract class RuleDecorator implements RuleInterface {
      * 
      * @param Rule $rule Rule to use for validation
      */
-    public function __construct( \Validator\Rule $rule ) {
+    public function __construct( \Validator\RuleInterface $rule ) {
         $this->rule = $rule;
     }
 

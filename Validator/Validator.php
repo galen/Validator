@@ -75,7 +75,7 @@ class Validator {
     /**
      * Validation errors
      *
-     * These are the actual errors returned from rules not validating
+     * Error messages from rules not validating
      * 
      * @var array
      * @access protected
@@ -101,46 +101,61 @@ class Validator {
     protected $global_empty_error;
 
     /**
-     * Add a validation rule
+     * Single value mode
      *
-     * $validator->addRule( 'email', new \Rule\Email( 'Enter a valid email' ) );
+     * True for single value validation
      * 
-     * @param $label Label of the item to add a rule to
+     * @var bool;
+     */
+    protected $single_value_mode = null;
+
+    /**
+     * Add a validation rule
+     * 
      * @param \Validator\Rule $rule Rule to validate against
+     * @param $key Key of the item to add a rule to
      * @param string $invalid_error Invalid error
      * @param string $empty_error Empty error
      * @return void
      * @access public
      */
-    public function addRule( $label, \Validator\RuleInterface $rule, $invalid_error = null, $empty_error = null ) {
-        if ( !is_string( $label ) || empty( $label ) ) {
-            throw new InvalidArgumentException( 'Invalid label passed to addRule' );
+    public function addRule( \Validator\RuleInterface $rule, $key = null, $invalid_error = null, $empty_error = null ) {
+        if ( $this->single_value_mode === true && $key !== null ) {
+            throw new \InvalidArgumentException( 'In single value mode' );
         }
-        $this->rules[$label][] = $rule;
+        if ( $this->single_value_mode === false && $key === null ) {
+            throw new \InvalidArgumentException( 'Not In single value mode' );
+        }
+        $this->single_value_mode = $key ? false : true;
+        if ( $this->single_value_mode === false && ( !is_string( $key ) || empty( $key ) ) ) {
+            throw new \InvalidArgumentException( 'Invalid key passed to addRule' );
+        }
+        if ( $this->single_value_mode === true ) {
+            $key = 'single_value_mode';
+        }
+        $this->rules[$key][] = $rule;
         if ( $invalid_error ) {
-            $this->invalid_errors[$label][ get_class( $rule ) ] = ( string ) $invalid_error;
+            $this->invalid_errors[$key][ get_class( $rule ) ] = ( string ) $invalid_error;
         }
         if ( $empty_error ) {
-            $this->empty_errors[$label][ get_class( $rule ) ] = ( string ) $empty_error;
+            $this->empty_errors[$key][ get_class( $rule ) ] = ( string ) $empty_error;
         }
     }
 
     /**
      * Add a validation rule if the data is not empty
      *
-     * $validator->addRuleIfNotEmpty( 'email', new \Rule\Email( 'Enter a valid email' ) );
-     *
      * Validation will only occur if email is not empty
      * 
-     * @param $label Label of the item to add a rule to
      * @param \Validator\Rule $rule Rule to validate against
+     * @param $key Key of the item to add a rule to
      * @param string $invalid_error Invalid error
      * @param string $empty_error Empty error
      * @return void
      * @access public
      */
-    public function addRuleIfNotEmpty( $label, \Validator\RuleInterface $rule, $invalid_error = null, $empty_error = null ) {
-        $this->addRule( $label, new \Validator\Rule\IfNotEmpty( $rule ), $invalid_error, $empty_error );
+    public function addRuleIfNotEmpty( \Validator\RuleInterface $rule, $key = null, $invalid_error = null, $empty_error = null ) {
+        $this->addRule( new \Validator\Rule\IfNotEmpty( $rule ), $key, $invalid_error, $empty_error );
     }
 
     /**
@@ -200,13 +215,13 @@ class Validator {
      *
      * Add a filter to an item
      * 
-     * @param string $label Label of the item to add the filter to
+     * @param string $key Key of the item to add the filter to
      * @param Callable $callable Callable
      * @return void
      * @access public
      */
-    public function addFilter( $label, Callable $callable ) {
-        $this->filters[$label][] = $callable;
+    public function addFilter( $key, Callable $callable ) {
+        $this->filters[$key][] = $callable;
     }
 
     /**
@@ -252,14 +267,14 @@ class Validator {
      * Apply filters to the label
      * Global filters first, then local filters
      * 
-     * @param string $data_label Label to apply filters to
+     * @param string $key Key to apply filters to
      * @return void
      * @access protected
      */
-    protected function applyFilters( $data_label ) {
-        $filters = array_merge( $this->global_filters, isset( $this->filters[$data_label] ) ? $this->filters[$data_label] : array() );
+    protected function applyFilters( $key ) {
+        $filters = array_merge( $this->global_filters, isset( $this->filters[$key] ) ? $this->filters[$key] : array() );
         foreach( $filters as $filter ) {
-            $this->data[$data_label] = call_user_func( $filter, $this->data[$data_label] );
+            $this->data[$key] = call_user_func( $filter, $this->data[$key] );
         }
     }
 
@@ -285,7 +300,7 @@ class Validator {
      * @access protected
      */
     protected function cleanupValidationErrors() {
-        foreach( $this->validation_errors as $data_label => $errors ) {
+        foreach( $this->validation_errors as $key => $errors ) {
             $filtered = array_filter( $errors );
         }
     }
@@ -302,39 +317,42 @@ class Validator {
      * @access public
      */
     public function validate( $data ) {
+        if( $this->single_value_mode === true ) {
+            $data = array( 'single_value_mode' => $data );
+        }
         if ( is_object( $data ) ) {
             $data = get_object_vars( $data );
         }
         $this->data = $this->unfiltered_data = $data;
-        foreach( $this->rules as $data_label => $rules ) {
-            $this->applyFilters( $data_label );
+        foreach( $this->rules as $key => $rules ) {
+            $this->applyFilters( $key );
             foreach( $rules as $rule ) {
-                $result = $rule->validate( $this->data[$data_label] );
+                $result = $rule->validate( $this->data[$key] );
                 if ( !$result ) {
-                    if ( empty( $this->data[$data_label] ) ) {
-                        if ( isset( $this->empty_errors[$data_label][ get_class( $rule ) ] ) ) {
-                            $this->validation_errors[$data_label][] = $this->empty_errors[$data_label][ get_class( $rule ) ];
+                    if ( empty( $this->data[$key] ) ) {
+                        if ( isset( $this->empty_errors[$key][ get_class( $rule ) ] ) ) {
+                            $this->validation_errors[$key][] = $this->empty_errors[$key][ get_class( $rule ) ];
                         }
                         elseif( $this->global_empty_error ) {
-                            if ( !isset( $labels_with_global_empty_error[$data_label] ) ) {
-                                $this->validation_errors[$data_label][] = $this->global_empty_error;
-                                $labels_with_global_empty_error[$data_label] = true;
+                            if ( !isset( $labels_with_global_empty_error[$key] ) ) {
+                                $this->validation_errors[$key][] = $this->global_empty_error;
+                                $labels_with_global_empty_error[$key] = true;
                             }
                         }
                         else {
-                            if ( isset( $this->invalid_errors[$data_label][ get_class( $rule ) ] ) ) {
-                                $this->validation_errors[$data_label][] = $this->invalid_errors[$data_label][ get_class( $rule ) ];
+                            if ( isset( $this->invalid_errors[$key][ get_class( $rule ) ] ) ) {
+                                $this->validation_errors[$key][] = $this->invalid_errors[$key][ get_class( $rule ) ];
                             }
                             else {
-                                $this->validation_errors[$data_label][] = true;
+                                $this->validation_errors[$key][] = true;
                             }
                         }
                     }
-                    elseif( isset( $this->invalid_errors[$data_label][ get_class( $rule ) ] ) ) {
-                        $this->validation_errors[$data_label][] = $this->invalid_errors[$data_label][ get_class( $rule ) ];
+                    elseif( isset( $this->invalid_errors[$key][ get_class( $rule ) ] ) ) {
+                        $this->validation_errors[$key][] = $this->invalid_errors[$key][ get_class( $rule ) ];
                     }
                     else {
-                        $this->validation_errors[$data_label][] = true;
+                        $this->validation_errors[$key][] = true;
                     }
                     if ( !$this->return_all_errors ) {
                         $this->cleanupValidationErrors();
