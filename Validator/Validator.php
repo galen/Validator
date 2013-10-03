@@ -119,7 +119,7 @@ class Validator {
      * @return void
      * @access public
      */
-    public function addRule( \Validator\RuleInterface $rule, $key = null, $invalid_error = null, $empty_error = null ) {
+    public function addRule( \Validator\Rule $rule, $key = null, $invalid_error = null, $empty_error = null ) {
         if ( $this->single_value_mode === true && $key !== null ) {
             throw new \InvalidArgumentException( 'In single value mode' );
         }
@@ -140,22 +140,6 @@ class Validator {
         if ( $empty_error ) {
             $this->empty_errors[$key][ get_class( $rule ) ] = ( string ) $empty_error;
         }
-    }
-
-    /**
-     * Add a validation rule if the data is not empty
-     *
-     * Validation will only occur if email is not empty
-     * 
-     * @param \Validator\Rule $rule Rule to validate against
-     * @param $key Key of the item to add a rule to
-     * @param string $invalid_error Invalid error
-     * @param string $empty_error Empty error
-     * @return void
-     * @access public
-     */
-    public function addRuleIfNotEmpty( \Validator\RuleInterface $rule, $key = null, $invalid_error = null, $empty_error = null ) {
-        $this->addRule( new \Validator\Rule\IfNotEmpty( $rule ), $key, $invalid_error, $empty_error );
     }
 
     /**

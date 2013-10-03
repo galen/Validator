@@ -17,7 +17,7 @@ Abstract class Rule implements RuleInterface {
      * Error exception
      *
      * Throw a rule error exception
-     * 
+     *
      * @param string $exception_type Type of exception
      * @param string $error Error
      * @return void
