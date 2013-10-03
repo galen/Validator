@@ -6,8 +6,8 @@ namespace Validator\Rule;
  * Date after validator
  *
  * $validator->addRule(
- *     'money_transfer_date',
  *     new Rule\DateAfter( date( 'm/d/y' ), 'm/d/y' ),
+*     'money_transfer_date',
  *     'Transfer date must be after today'
  * );
  * 

@@ -7,7 +7,7 @@ namespace Validator\Rule;
  *
  * Validates based on a minimum length
  *
- * $validator->addRule( 'password', new Rule\MinLength( 8 ), 'Your password must be at least 8 characters long' );
+ * $validator->addRule( new Rule\MinLength( 8 ), 'password', 'Your password must be at least 8 characters long' );
  *
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator

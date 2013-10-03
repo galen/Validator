@@ -5,7 +5,7 @@ namespace Validator\Rule;
 /**
  * Validates that a value is not empty
  *
- * $validator->validate( 'phone_number', new Rule\NotEmpty, 'Please enter your phone number' );
+ * $validator->validate( new Rule\NotEmpty, 'phone_number', 'Please enter your phone number' );
  * 
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator

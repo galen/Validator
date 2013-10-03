@@ -5,7 +5,7 @@ namespace Validator\Rule;
 /**
  * Validates that a number is between two values
  *
- * $validator->validate( 'age', new Rule\Between( 18, 40 ), 'You must be between 18 and 40' );
+ * $validator->validate( new Rule\Between( 18, 40 ), 'age', You must be between 18 and 40' );
  * 
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator

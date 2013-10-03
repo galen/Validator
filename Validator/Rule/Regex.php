@@ -7,7 +7,7 @@ namespace Validator\Rule;
  *
  * Validates based on a regular expression
  *
- * $validator->addRule( 'postal_code', new Rule\Regex( '~^\d{5}$~' ) );
+ * $validator->addRule( new Rule\Regex( '~^\d{5}$~' ), 'postal_code' );
  * 
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator

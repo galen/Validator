@@ -5,7 +5,7 @@ namespace Validator\Rule;
 /**
  * Validates that a value is in an array
  *
- * $validator->validate( 'state', new Rule\InArray( $states ), 'Please enter your state' );
+ * $validator->validate( new Rule\InArray( $states ), 'state', Please enter your state' );
  * 
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator

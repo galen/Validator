@@ -7,7 +7,7 @@ namespace Validator\Rule;
  *
  * Validates based on a maximum length
  *
- * $validator->addRule( 'password', new Rule\MaxLength( 12 ), 'Your password must be under 12 characters long' );
+ * $validator->addRule( new Rule\MaxLength( 12 ), 'password', 'Your password must be under 12 characters long' );
  * 
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator

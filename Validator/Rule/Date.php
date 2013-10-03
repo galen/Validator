@@ -5,7 +5,7 @@ namespace Validator\Rule;
 /**
  * Date validator
  *
- * $validator->addRule( 'birthdate', new Rule\Date( 'm/d/y' ), 'Please enter your birthdate (m/d/y)' ) );
+ * $validator->addRule( new Rule\Date( 'm/d/y' ), 'birthdate', 'Please enter your birthdate (m/d/y)' ) );
  * 
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator

@@ -6,8 +6,8 @@ namespace Validator\Rule;
  * Date before validator
  *
  * $validator->addRule(
- *     'bill_pay_date',
  *     new Rule\DateBefore( '1/1/14', 'm/d/y' ),
+ *     'bill_pay_date',
  *     'The bill is due before the new year'
  * );
  * 

@@ -7,7 +7,7 @@ namespace Validator\Rule;
  *
  * Validates based on an exact length
  *
- * $validator->addRule( 'postal_code', new Rule\Length( 5 ), 'Your postal code must be 5 characters long' );
+ * $validator->addRule( new Rule\Length( 5 ), 'postal_code', 'Your postal code must be 5 characters long' );
  * 
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator

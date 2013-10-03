@@ -7,7 +7,7 @@ namespace Validator\Rule;
  *
  * Validates based on equality
  *
- * $validator->addRule( 'password', new Rule\Equals( $_POST['reenter_password'] ) );
+ * $validator->addRule( new Rule\Equals( $_POST['reenter_password'] ), 'password' );
  * 
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator

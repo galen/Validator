@@ -7,7 +7,7 @@ namespace Validator\Rule;
  *
  * Validates an email address
  * 
- * $validator->addRule( 'email', new Rule\Email, 'Enter a valid email address' );
+ * $validator->addRule( new Rule\Email, 'email', Enter a valid email address' );
  *
  * @author Galen Grover <galenjr@gmail.com>
  * @package Validator
